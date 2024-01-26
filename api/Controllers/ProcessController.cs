@@ -42,11 +42,11 @@ public class ProcessController : ControllerBase
             {
                 await Request.Body.CopyToAsync(stream);
 
-                fileName = $"{DateTime.Now:yyyyMMddHHmmss}-${model}-${fileName}";
+                fileName = $"{DateTime.Now:yyyy-MM-dd-HH-mm-ss}---{model}---{fileName}";
 
                 var blob = await storage.SaveFileAsync("aistorage", fileName, stream.ToArray(), true);
 
-                return Ok(await documentAiService.GetResultsAsync(model, blob.Uri.ToString()));
+                return Ok(await documentAiService.GetResultsAsync(model, storage.CreateServiceSASBlob("aistorage", fileName)));
             }
         }
         catch (Exception ex)

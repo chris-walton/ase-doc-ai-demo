@@ -1,20 +1,30 @@
 ﻿using Ase.Doc.Demo.Configuration;
 using Azure;
+using Azure.Storage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Azure.Storage.Blobs.Specialized;
+using Azure.Storage.Sas;
 
 namespace Ase.Doc.Demo.Services;
 
 public class Storage
 {
-    private readonly BlobServiceClient blobClient;
+    private readonly AppConfig config;
+    private readonly BlobServiceClient service; //TODO Remove use of
+    private readonly StorageSharedKeyCredential credentials;
 
     public Storage(AppConfig config)
     {
-        blobClient = new BlobServiceClient(
-           new Uri(config.Storage.Uri),
-           new AzureSasCredential(config.Storage.Key));
+        this.config = config;
+
+        credentials = new StorageSharedKeyCredential(config.Storage.AccountName, config.Storage.AccountKey);
+        service = new BlobServiceClient(
+        new Uri($"https://{config.Storage.AccountName}.blob.core.windows.net"),
+             credentials);
     }
+
+    private string AccountName => config.Storage.AccountName;
 
     public async Task<byte[]> GetFileAsBytesAsync(string containerName, string fileName)
     {
@@ -57,10 +67,34 @@ public class Storage
 
     private async Task<BlobContainerClient> GetContainerAsync(string containerName)
     {
-        var container = blobClient.GetBlobContainerClient(containerName.ToLower());
+        var container = service.GetBlobContainerClient(containerName.ToLower());
 
         await container.CreateIfNotExistsAsync();
 
         return container;
+    }
+
+    public Uri CreateServiceSASBlob(string containerName, string fileName)
+    {
+        //build the blob container url
+        var blobUrl = string.Format("https://{0}.blob.core.windows.net/{1}/{2}", AccountName, containerName, fileName);
+
+        //directly build BlobContainerClient, then pass it to GetServiceSasUriForContainer() method
+        var blob = new BlobClient(new Uri(blobUrl), credentials);
+
+        // Check if BlobContainerClient object has been authorized with Shared Key
+        if (!blob.CanGenerateSasUri) return null;
+
+        // Create a SAS token that's valid for 10 minutes
+        var sasBuilder = new BlobSasBuilder
+        {
+            Resource = "b",
+            BlobName = blob.Name,
+            BlobContainerName = blob.GetParentBlobContainerClient().Name,
+            ExpiresOn = DateTimeOffset.UtcNow.AddMinutes(10)
+        };
+        sasBuilder.SetPermissions(BlobContainerSasPermissions.Read);
+
+        return blob.GenerateSasUri(sasBuilder);
     }
 }

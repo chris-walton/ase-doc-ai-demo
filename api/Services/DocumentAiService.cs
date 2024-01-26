@@ -17,7 +17,7 @@ public class DocumentAiService
     }
 
     //bentley-model
-    public async Task<object> GetResultsAsync(string model, string uri)
+    public async Task<object> GetResultsAsync(string model, Uri uri)
     {
         var aiResults = await GetAiResultsAsync(model, uri);
 
@@ -51,17 +51,15 @@ public class DocumentAiService
         }
 
         return document.Fields;
-        //return results;
     }
 
-    private async Task<AnalyzeResult> GetAiResultsAsync(string model, string uri)
+    private async Task<AnalyzeResult> GetAiResultsAsync(string model, Uri uri)
     {
         var client = new DocumentAnalysisClient(
             new Uri(config.Endpoint),
             new AzureKeyCredential(config.Key));
 
-        var fileUri = new Uri("https://asesingapore.blob.core.windows.net/aistorage/test.pdf?sv=2021-10-04&st=2024-01-24T09%3A13%3A31Z&se=2025-01-25T09%3A13%3A00Z&sr=b&sp=r&sig=UJlUojI2NorSg%2F12T6HpunvZQ%2Fu1imgT%2FiGY%2FC5TEKM%3D");
-        var operation = await client.AnalyzeDocumentFromUriAsync(WaitUntil.Completed, model, fileUri);
+        var operation = await client.AnalyzeDocumentFromUriAsync(WaitUntil.Completed, model, uri);
 
         return operation.Value;
     }

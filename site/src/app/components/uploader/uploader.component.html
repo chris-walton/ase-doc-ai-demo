@@ -1,0 +1,10 @@
+<div class="w-100">
+  <kendo-fileselect
+    zoneId="myZone"
+    [multiple]="false"
+    (remove)="removed.emit()"
+    (select)="uploaded.emit($event.files[0])"
+  >
+    <kendo-upload-messages />
+  </kendo-fileselect>
+</div>

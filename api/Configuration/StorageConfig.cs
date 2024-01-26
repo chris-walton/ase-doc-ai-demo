@@ -2,12 +2,12 @@ namespace Ase.Doc.Demo.Configuration;
 
 public class StorageConfig
 {
-    public StorageConfig(string uri, string key)
+    public StorageConfig(string accountName, string accountKey)
     {
-        Uri = uri;
-        Key = key;
+        AccountName = accountName;
+        AccountKey = accountKey;
     }
 
-    public string Uri { get; private set; }
-    public string Key { get; private set; }
+    public string AccountName { get; private set; }
+    public string AccountKey { get; private set; }
 }

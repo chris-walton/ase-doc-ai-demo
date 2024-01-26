@@ -1,0 +1,16 @@
+<kendo-grid [data]="rows">
+  <kendo-grid-column field="code" title="Code" />
+  <kendo-grid-column
+    field="value"
+    title="Value"
+    class="text-end wd-150"
+    headerClass="wd-150"
+  />
+  <kendo-grid-column
+    field="confidence"
+    title="Confidence Name"
+    class="text-end wd-150"
+    headerClass="wd-150"
+    format="{0:p2}"
+  />
+</kendo-grid>

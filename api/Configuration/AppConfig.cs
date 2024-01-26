@@ -9,8 +9,8 @@ public class AppConfig
             config["Azure:AI:Document:Key"]);
 
         Storage = new StorageConfig(
-            config["Azure:Storage:Uri"],
-            config["Azure:Storage:Key"]);
+            config["Azure:Storage:AccountName"],
+            config["Azure:Storage:AccountKey"]);
     }
     public AzureDocumentAiConfig DocumentAi { get; private set; }
 

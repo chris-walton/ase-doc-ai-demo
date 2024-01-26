@@ -1,0 +1,24 @@
+version: '3'
+services:
+  ase-demo-api:
+    container_name: ase-demo-api
+    build:
+      context: ./api
+      dockerfile: Dockerfile-dev
+    ports:
+      - 88:88
+    volumes:
+      - './api:/usr/src/app/api'
+  
+#  ase-demo-site:
+#    container_name: ase-demo-site
+#    build:
+#      context: ./site
+#      dockerfile: Dockerfile-dev
+#      args:
+#          KENDO_UI_LICENSE: $KENDO_UI_LICENSE
+#    ports:
+#      - 4200:4200
+#    volumes:
+#       - ./site:/usr/src/app/site
+#       - /usr/src/app/site/node_modules

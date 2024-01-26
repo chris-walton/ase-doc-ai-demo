@@ -1,0 +1,61 @@
+<div class="fluid-container p-3">
+  <div class="row">
+    <div class="col-sm-12 offset-md-2 col-md-8 pd-b-10">
+      <h5>1. Select a Model</h5>
+      <div class="w-100 pd-x-20">
+        <app-model-list [models]="models" (modelSelected)="model.set($event)" />
+      </div>
+    </div>
+    <div class="col-sm-12 offset-md-2 col-md-8 pd-b-10">
+      <h5>2. Upload the Financial Statement</h5>
+      <div class="w-100 pd-x-20">
+        <app-uploader
+          (uploaded)="file.set($event)"
+          (removed)="file.set(undefined)"
+        />
+      </div>
+    </div>
+    <div class="col-sm-12 offset-md-2 col-md-8 pd-b-10">
+      <h5>3. Submit the information to Azure AI to Process</h5>
+      <div class="w-100 pd-x-20 text-end">
+        <label class="fst-italic fw-lighter fs-6 mg-r-10">
+          You must select a model and upload the statment before you can submit.
+        </label>
+        <button
+          class="btn btn-primary"
+          [disabled]="!model() || !file() || processing()"
+          (click)="submit()"
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+    <div class="col-sm-12 offset-md-2 col-md-8 pd-b-10">
+      <h5>4. Review the Results and Download the CSV File</h5>
+      @if (processing()) {
+      <div class="w-100 pd-x-20 text-center">
+        <h4>Processing...</h4>
+        <kendo-loader size="large" />
+      </div>
+      } @else if (rows()) {
+      <div class="w-100 pd-x-20">
+        <div class="card">
+          <div class="card-body">
+            <app-data-header
+              [dateFrom]="dateFrom()"
+              [dateTo]="dateTo()"
+              [dealerCode]="dealerCode()"
+              [dealerName]="dealerName()"
+            />
+            <app-data-list [rows]="rows()!" />
+          </div>
+        </div>
+      </div>
+      } @else {
+      <div class="w-100 pd-x-20">
+        The results will display here once the process is complete.
+      </div>
+      }
+    </div>
+  </div>
+</div>

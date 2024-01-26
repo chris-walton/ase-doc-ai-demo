@@ -1,0 +1,19 @@
+# Stage 1
+FROM node:20.9.0 as node
+
+WORKDIR /usr/src/app/site
+
+COPY ./ ./
+
+ARG KENDO_UI_LICENSE
+
+ENV KENDO_UI_LICENSE=${KENDO_UI_LICENSE}
+
+#RUN npm run docker:yarn
+RUN npm run docker:globals
+RUN npm run docker:install
+RUN npm run kendo:auth
+
+EXPOSE 4200
+
+CMD ["npm", "start"]
